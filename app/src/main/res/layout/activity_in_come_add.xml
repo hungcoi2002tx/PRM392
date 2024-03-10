@@ -56,7 +56,7 @@ android:orientation="vertical">
     <!-- Nội dung của LinearLayout con 2 -->
 
     <Spinner
-        android:id="@+id/spin_category"
+        android:id="@+id/spin_income_add_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -74,7 +74,7 @@ android:orientation="vertical">
         />
 
     <Button
-        android:id="@+id/btn_expense_submit"
+        android:id="@+id/btn_income_submit"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

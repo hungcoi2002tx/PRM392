@@ -34,7 +34,7 @@
                     ></Button>
 
                 <Spinner
-                    android:id="@+id/spinner2"
+                    android:id="@+id/sp_home_month"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="2"/>
@@ -99,6 +99,7 @@
                                 android:layout_gravity="center">
                             </ImageView>
                             <LinearLayout
+                                android:id="@+id/ll_go_income"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:orientation="vertical"
@@ -142,6 +143,7 @@
                                 android:layout_gravity="center">
                             </ImageView>
                             <LinearLayout
+                                android:id="@+id/ll_go_expense"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:orientation="vertical"

@@ -19,11 +19,10 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background=""
-            android:text="<"
+            android:background="@drawable/bg_button_blue"
             ></Button>
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/sp_budget_month"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1" />
@@ -31,8 +30,7 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background=""
-            android:text=">"
+            android:background="@drawable/bg_button_blue"
             ></Button>
     </LinearLayout>
     <LinearLayout
@@ -46,6 +44,7 @@
             android:layout_height="0dp"
             android:layout_weight="5"></LinearLayout>
         <LinearLayout
+            android:id="@+id/ll_create_budget"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -53,7 +52,7 @@
             android:layout_margin="10dp">
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/tv_add_budget"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

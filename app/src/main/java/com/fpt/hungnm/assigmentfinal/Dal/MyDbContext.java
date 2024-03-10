@@ -146,8 +146,6 @@ public class MyDbContext extends SQLiteOpenHelper {
             values.put("categoryId", transaction.getCategory());
             values.put("price", transaction.getPrice());
             values.put("isIncome", transaction.getIsIncome());
-
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String createDateStr = dateFormat.format(transaction.getCreateDate());
             values.put("createDate", createDateStr);
