@@ -10,45 +10,69 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="104dp"
         android:layout_marginTop="84dp"
         android:text="Đăng Nhập"
-        android:textSize="40dp"
+        android:textSize="30sp"
+        android:textColor="#3F51B5"
+        android:fontFamily="sans-serif-light"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/edtTk"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtInputAccount"
         android:layout_width="293dp"
         android:layout_height="70dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="236dp"
-        android:ems="10"
-        android:hint="Tài Khoản"
-        android:inputType="text"
+        android:layout_marginTop="180dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/edtMk"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtTk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:ems="10"
+            android:hint="Tài Khoản"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtInputPassword"
         android:layout_width="293dp"
         android:layout_height="70dp"
-        android:layout_marginTop="44dp"
-        android:ems="10"
-        android:hint="Mật Khẩu"
-        android:inputType="text"
-        app:layout_constraintStart_toStartOf="@+id/edtTk"
-        app:layout_constraintTop_toBottomOf="@+id/edtTk" />
+        android:layout_marginTop="10dp"
+        app:endIconMode="password_toggle"
+        app:layout_constraintStart_toStartOf="@+id/txtInputAccount"
+        app:layout_constraintTop_toBottomOf="@+id/txtInputAccount">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtMk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:ems="10"
+            android:hint="Mật Khẩu"
+            android:inputType="textPassword"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="60dp"
         android:text="Đăng nhập"
-        app:layout_constraintStart_toStartOf="@+id/edtMk"
-        app:layout_constraintTop_toBottomOf="@+id/edtMk" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtInputPassword" />
 
     <TextView
         android:id="@+id/tvError"
@@ -60,5 +84,6 @@
         android:textColor="@color/red"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtMk" />
+        app:layout_constraintTop_toBottomOf="@+id/txtInputPassword" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
