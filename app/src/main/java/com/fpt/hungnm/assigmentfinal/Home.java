@@ -1,6 +1,8 @@
 package com.fpt.hungnm.assigmentfinal;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,12 +15,19 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.fpt.hungnm.assigmentfinal.Adapter.RecylerViewAdapter;
+import com.fpt.hungnm.assigmentfinal.Adapter.TransitionRecyclerViewAdapter;
 import com.fpt.hungnm.assigmentfinal.Dal.MyDbContext;
+import com.fpt.hungnm.assigmentfinal.Model.Category;
+import com.fpt.hungnm.assigmentfinal.Model.Transaction;
 
 import java.util.Date;
+import java.util.List;
 
-public class Home extends AppCompatActivity {
+public class Home extends AppCompatActivity implements TransitionRecyclerViewAdapter.TransitionListener {
+    private TransitionRecyclerViewAdapter adapter;
 
+    private RecyclerView recyclerView;
     private static final String TAG ="Hungnm";
 
     private MyDbContext dbContext;
@@ -30,6 +39,10 @@ public class Home extends AppCompatActivity {
     private LinearLayout btnGoExpense;
     private TextView tvBalance;
     private Spinner spMonth;
+    private TextView tvHomeIncome;
+    private TextView tvHomeExpense;
+
+    private Transaction transactionClicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +52,21 @@ public class Home extends AppCompatActivity {
             bindingView();
             bindingAction();
             bindingData();
+            setAdapter();
         }catch (Exception ex){
             Log.e(TAG, "Home - onCreate - " + ex.getMessage());
+        }
+    }
+    private void setAdapter() {
+        try{
+            List<Transaction> list = dbContext.getAllTransition();
+            adapter.setTransitionListener(this);
+            adapter.setList(list);
+            LinearLayoutManager manager = new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
+            recyclerView.setLayoutManager(manager);
+            recyclerView.setAdapter(adapter);
+        }catch (Exception ex){
+            Log.e(TAG, "Home - setAdapter - " + ex.getMessage());
         }
     }
 
@@ -51,8 +77,9 @@ public class Home extends AppCompatActivity {
             int currentMonth = currentDate.getMonth() + 1;
             String spClicked = "Tháng " + String.valueOf(currentMonth);
             spMonth.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,getResources().getStringArray(R.array.month)));
-            spMonth.setSelection(currentMonth);
-            tvBalance.setText(String.valueOf(dbContext.getBalance()));
+            spMonth.setSelection(currentMonth - 1);
+            tvBalance.setText(String.valueOf(dbContext.getBalance(currentMonth)));
+
         }catch (Exception ex){
             Log.e(TAG, "Home - bindingData - " + ex.getMessage());
         }
@@ -95,8 +122,23 @@ public class Home extends AppCompatActivity {
             btnGoExpense = findViewById(R.id.ll_go_expense);
             spMonth = findViewById(R.id.sp_home_month);
             tvBalance = findViewById(R.id.tv_home_balance);
+            recyclerView = findViewById(R.id.rcv_home_transition);
+            tvHomeIncome = findViewById(R.id.home_income_amount);
+            tvHomeExpense = findViewById(R.id.home_expense_amount);
+            adapter = new TransitionRecyclerViewAdapter();
+            dbContext = new MyDbContext(this);
         }catch (Exception ex){
             Log.e(TAG, "Home - bindingView - " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        try{
+            transactionClicked = adapter.getTransition(position);
+
+        }catch (Exception ex){
+            Log.e(TAG, "Home.Java - onItemClick - " + ex.getMessage());
         }
     }
 }

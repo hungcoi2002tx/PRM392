@@ -18,11 +18,13 @@ import com.fpt.hungnm.assigmentfinal.Dal.MyDbContext;
 import com.fpt.hungnm.assigmentfinal.Model.Category;
 import com.fpt.hungnm.assigmentfinal.Model.Transaction;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Expense_Add extends AppCompatActivity {
+    private static final String PATTERN = "yyyy-MM-dd";
     private static final String TAG = "Hungnm";
     private EditText edtExpenseMoney;
     private Button btnSave;
@@ -117,7 +119,9 @@ public class Expense_Add extends AppCompatActivity {
                 transaction.setTitle(edtExpenseDes.getText().toString());
                 transaction.setIsIncome("EXPENSE");
                 Date currentDate = new Date();
-                transaction.setCreateDate(currentDate);
+                SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
+                String currentDateString = dateFormat.format(currentDate);
+                transaction.setCreateDate(currentDateString);
                 long result = myDbContext.addTransaction(transaction);
                 if(result == -1){
                     Toast.makeText(this, "Thêm thất bại", Toast.LENGTH_SHORT).show();

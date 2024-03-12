@@ -6,16 +6,16 @@ public class Category {
     private int id;
     private String title;
     private String isIncome;
-    private Date createDate;
+    private String createDate;
 
-    public Category(int id, String title, String isIncome, Date createDate) {
+    public Category(int id, String title, String isIncome, String createDate) {
         this.id = id;
         this.title = title;
         this.isIncome = isIncome;
         this.createDate = createDate;
     }
 
-    public Category(String title, String isIncome, Date createDate) {
+    public Category(String title, String isIncome, String createDate) {
         this.title = title;
         this.isIncome = isIncome;
         this.createDate = createDate;
@@ -48,11 +48,11 @@ public class Category {
         this.isIncome = isIncome;
     }
 
-    public Date getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 }
