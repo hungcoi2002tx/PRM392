@@ -117,6 +117,29 @@ public class MyDbContext extends SQLiteOpenHelper {
         return list;
     }
 
+    public List<Category> getAllCategoryByType(String type){
+        List<Category> list = new ArrayList<>();
+        try{
+            SQLiteDatabase sql = getReadableDatabase();
+            String whereClause = "IsIncome = ? ";
+            String[] whereArgs = {type};
+            String orderBy = "CreateDate DESC";
+            Cursor cs = sql.query(TABLE_CATEGORY,null,whereClause,whereArgs,null,null,orderBy);
+            while (cs != null && cs.moveToNext()){
+                int id = cs.getInt(0);
+                String title = cs.getString(1);
+                String isIncome = cs.getString(2);
+
+                long createDateMillis = cs.getLong(3);
+                Date createDate = new Date(createDateMillis);
+                list.add(new Category(id,title,isIncome,createDate));
+            }
+        }catch (Exception ex){
+            Log.e(TAG,"MyDbContext - getAllCategoryByType - " + ex.getMessage());
+        }
+        return list;
+    }
+
     public List<Budget> getAllBudget(){
         List<Budget> list = new ArrayList<>();
         try{

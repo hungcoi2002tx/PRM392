@@ -63,6 +63,7 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
             btnUpdate.setEnabled(false);
             btnDelete.setEnabled(false);
             adapter.notifyDataSetChanged();
+            tvError.setText("");
         }catch (Exception ex){
             Log.e(TAG, "MainCategory - reLoad - " + ex.getMessage());
         }
@@ -111,21 +112,26 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
         try{
             if(categoryClicked.getIsIncome() != null  &&!categoryClicked.getIsIncome().equals("")){
                 Category category = getCategory();
-                if(category != null){
-                    categoryClicked.setTitle(category.getTitle());
-                    categoryClicked.setIsIncome(category.getIsIncome());
-                    long result = dbContext.updateCategory(categoryClicked);
-                    if(result == -1){
-                        Toast.makeText(this, "Có lỗi trong quá trình xử lý", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(this, "Cập nhập dữ liệu thành công", Toast.LENGTH_SHORT).show();
-                        reLoad();
-                        categoryClicked = new Category();
-                    }
+                if(!checkValidate(category)){
+                    tvError.setText("Tên đã bị trùng");
+                }else {
+                    if(category != null){
+                        categoryClicked.setTitle(category.getTitle());
+                        categoryClicked.setIsIncome(category.getIsIncome());
+                        long result = dbContext.updateCategory(categoryClicked);
+                        if(result == -1){
+                            Toast.makeText(this, "Có lỗi trong quá trình xử lý", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(this, "Cập nhập dữ liệu thành công", Toast.LENGTH_SHORT).show();
+                            reLoad();
+                            categoryClicked = new Category();
+                        }
 
-                }else{
-                    Toast.makeText(this, "Có lỗi trong quá trình xử lý", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(this, "Có lỗi trong quá trình xử lý", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
             }else{
                 Toast.makeText(this, "Chưa chọn danh mục sửa", Toast.LENGTH_SHORT).show();
             }
@@ -133,6 +139,21 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
         }catch (Exception ex){
             Log.e(TAG, "MainCategory - onUpdateClick - " + ex.getMessage());
         }
+    }
+
+    private boolean checkValidate(Category category){
+        try{
+            List<Category> categories = dbContext.getAllCategory();
+            for (Category item :
+                    categories) {
+                if(item.getTitle().equals(category.getTitle())){
+                    return false;
+                }
+            }
+        }catch (Exception ex){
+            Log.e(TAG, "MainCategory - checkValidate - " + ex.getMessage());
+        }
+        return true;
     }
 
     private Category getCategory(){
@@ -170,11 +191,15 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
         try{
             Category category = getCategory();
             if(category != null){
-                Date currentDate = new Date();
-                category.setCreateDate(currentDate);
-                dbContext.addCategory(category);
-                Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
-                reLoad();
+                if(!checkValidate(category)){
+                    tvError.setText("Tên đã bị trùng");
+                }else{
+                    Date currentDate = new Date();
+                    category.setCreateDate(currentDate);
+                    dbContext.addCategory(category);
+                    Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+                    reLoad();
+                }
             }else{
                 Toast.makeText(this, "Có lỗi trong quá trình xử lý", Toast.LENGTH_SHORT).show();
             }
