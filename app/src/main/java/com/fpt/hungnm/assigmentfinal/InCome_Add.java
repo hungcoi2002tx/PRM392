@@ -2,6 +2,7 @@ package com.fpt.hungnm.assigmentfinal;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +37,7 @@ public class InCome_Add extends AppCompatActivity {
     private ImageView imgAddCategory;
 
     private TextView tvError;
+    private ImageView imgBackToHome;
 
 
     @Override
@@ -48,6 +50,15 @@ public class InCome_Add extends AppCompatActivity {
             bindingData();
         }catch (Exception ex){
             Log.e(TAG, "InCome_Add - onCreate - " + ex.getMessage());
+        }
+    }
+
+    private void onBackToHome(View view) {
+        try{
+            Intent i = new Intent(this, Home.class);
+            startActivity(i);
+        }catch (Exception ex){
+            Log.e(TAG, "Expense_Add - onBackToHome - " + ex.getMessage());
         }
     }
 
@@ -73,6 +84,7 @@ public class InCome_Add extends AppCompatActivity {
 
     private void bindingAction() {
         try{
+            imgBackToHome.setOnClickListener(this::onBackToHome);
             btnSave.setOnClickListener(this::onSaveClick);
             imgAddCategory.setOnClickListener(this::onAddCategory);
         }catch (Exception ex){
@@ -93,7 +105,7 @@ public class InCome_Add extends AppCompatActivity {
         }catch (Exception ex){
             Log.e(TAG, "InCome_Add - onSaveClick - " + ex.getMessage());
         }
-        return null; // Trả về null nếu không tìm thấy Category có title tương ứng
+        return null;
     }
     private void onSaveClick(View view) {
         try{
@@ -124,7 +136,7 @@ public class InCome_Add extends AppCompatActivity {
 
     private boolean checkValid(){
         try{
-            if(edtMoney.getText().equals("") || edtDescription.getText().equals("")){
+            if(edtMoney.getText().toString().equals("") || edtDescription.getText().toString().equals("")){
                 return false;
             }
         }catch (Exception ex){
@@ -153,7 +165,7 @@ public class InCome_Add extends AppCompatActivity {
             tvError = findViewById(R.id.tv_addincome_error);
             tvNoCategories = findViewById(R.id.tv_income_nocategory);
             imgAddCategory = findViewById(R.id.img_income_add_category);
-
+            imgBackToHome = findViewById(R.id.img_income_back);
         }catch (Exception ex){
             Log.e(TAG, "InCome_Add - bindingView - " + ex.getMessage());
         }

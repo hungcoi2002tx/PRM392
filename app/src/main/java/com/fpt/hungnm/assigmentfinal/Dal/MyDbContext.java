@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.nfc.Tag;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -411,4 +412,22 @@ public class MyDbContext extends SQLiteOpenHelper {
         return list;
     }
 
+    public Long getBalance() {
+        try {
+            List<Transaction> list = getAllTransition();
+            Long result = new Long(0);
+            for (Transaction item :
+                    list) {
+                if(item.getIsIncome().toString().equals("INCOME")){
+                    result = result + Long.valueOf(item.getPrice());
+                }else{
+                    result = result - Long.valueOf(item.getPrice());
+                }
+            }
+            return result;
+        } catch (Exception ex) {
+            Log.e(TAG, "MyDbContext - getBalance - " + ex.getMessage());
+        }
+        return Long.valueOf(0);
+    }
 }
