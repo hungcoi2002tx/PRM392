@@ -1,5 +1,6 @@
 package com.fpt.hungnm.assigmentfinal;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,27 +9,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.fpt.hungnm.assigmentfinal.Adapter.RecylerViewAdapter;
 import com.fpt.hungnm.assigmentfinal.Adapter.TransitionRecyclerViewAdapter;
 import com.fpt.hungnm.assigmentfinal.Dal.MyDbContext;
-import com.fpt.hungnm.assigmentfinal.Model.Category;
 import com.fpt.hungnm.assigmentfinal.Model.Transaction;
 
 import java.util.Date;
 import java.util.List;
 
-public class Home extends AppCompatActivity implements TransitionRecyclerViewAdapter.TransitionListener {
+public class Home extends AppCompatActivity implements TransitionRecyclerViewAdapter.TransitionListener, AdapterView.OnItemSelectedListener {
     private TransitionRecyclerViewAdapter adapter;
 
     private RecyclerView recyclerView;
     private static final String TAG ="Hungnm";
+    private static final int REQUEST_CODE = 1 ;
 
     private MyDbContext dbContext;
     private ImageView btnHome;
@@ -44,14 +45,16 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
 
     private Transaction transactionClicked;
 
+    private int month;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_home);
             bindingView();
+            initData();
             bindingAction();
-            bindingData();
             setAdapter();
         }catch (Exception ex){
             Log.e(TAG, "Home - onCreate - " + ex.getMessage());
@@ -70,18 +73,28 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
         }
     }
 
-    private void bindingData() {
+    private void initData() {
         try{
             dbContext = new MyDbContext(this);
             Date currentDate = new Date();
-            int currentMonth = currentDate.getMonth() + 1;
-            String spClicked = "Tháng " + String.valueOf(currentMonth);
+            month = currentDate.getMonth() + 1;
+            String spClicked = "Tháng " + String.valueOf(month);
             spMonth.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,getResources().getStringArray(R.array.month)));
-            spMonth.setSelection(currentMonth - 1);
-            tvBalance.setText(String.valueOf(dbContext.getBalance(currentMonth)));
+            spMonth.setSelection(month - 1);
 
+            getData();
         }catch (Exception ex){
             Log.e(TAG, "Home - bindingData - " + ex.getMessage());
+        }
+    }
+
+    private void getData(){
+        try{
+            tvBalance.setText(String.valueOf(dbContext.getBalance(month,null,null)));
+            tvHomeExpense.setText("$" + String.valueOf(dbContext.getBalance(month,"EXPENSE",null)));
+            tvHomeIncome.setText("$" + String.valueOf(dbContext.getBalance(month,"INCOME",null)));
+        }catch (Exception ex){
+            Log.e(TAG, "Home - getData - " + ex.getMessage());
         }
     }
 
@@ -89,6 +102,7 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
         try{
             btnGoIncome.setOnClickListener(this::goToIncome);
             btnGoExpense.setOnClickListener(this::goToExpense);
+            spMonth.setOnItemSelectedListener(this);
         }catch (Exception ex){
             Log.e(TAG, "Home - bindingAction - " + ex.getMessage());
         }
@@ -106,9 +120,19 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
     private void goToIncome(View view) {
         try{
             Intent i = new Intent(this, InCome_Add.class);
-            startActivity(i);
+            startActivityForResult(i,REQUEST_CODE);
         }catch (Exception ex){
             Log.e(TAG, "Home - goToIncome - " + ex.getMessage());
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == REQUEST_CODE) {
+                setAdapter();
+            }
         }
     }
 
@@ -136,9 +160,32 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
     public void onItemClick(View view, int position) {
         try{
             transactionClicked = adapter.getTransition(position);
-
+            if(transactionClicked.getIsIncome().equals("INCOME")){
+                Intent i = new Intent(this, InCome_Add.class);
+                i.putExtra("id",transactionClicked.getId());
+            }else{
+                Intent i = new Intent(this, Expense_Add.class);
+                i.putExtra("id",transactionClicked.getId());
+            }
         }catch (Exception ex){
             Log.e(TAG, "Home.Java - onItemClick - " + ex.getMessage());
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        try{
+            String selectedItem = parent.getItemAtPosition(position).toString();
+            month = position+ 1;
+            getData();
+            Toast.makeText(this, "Bạn đã chọn: " + selectedItem, Toast.LENGTH_SHORT).show();
+        }catch (Exception ex){
+            Log.e(TAG, "Home.Java - onItemSelected - " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

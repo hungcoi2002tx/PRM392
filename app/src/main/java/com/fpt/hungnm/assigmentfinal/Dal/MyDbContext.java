@@ -101,7 +101,6 @@ public class MyDbContext extends SQLiteOpenHelper {
         }catch (Exception ex){
             Log.e(TAG,"MyDbContext - getAllTransition - " + ex.getMessage());
         }
-        Collections.reverse(list);
         return list;
     }
 
@@ -343,53 +342,19 @@ public class MyDbContext extends SQLiteOpenHelper {
         return list;
     }
 
-    public List<Transaction> getTransactionByFilter(Date startDate, Date endDate, Boolean isIncomeFilter, String categoryIdFilter){
+    public List<Transaction> getTransactionByFilter(int month,String type,String _categoryId){
         List<Transaction> list = new ArrayList<>();
-        String type = null;
-        if(isIncomeFilter){
-            type = "y";
-        }else if(!isIncomeFilter){
-            type = "N";
-        }
         try{
-            String selection = null;
+            String selection = "strftime('%m', CreateDate) = ?";
             List<String> selectionArgsList = new ArrayList<>();
-            if(startDate != null){
-                selection = "CreateDate >= ?";
-                selectionArgsList.add(String.valueOf(startDate.getTime()));
-            }
-            if(endDate != null){
-                if(selection != null){
-                    selection = "CreateDate <= ?";
-                    selectionArgsList.add(String.valueOf(endDate.getTime()));
-                }else{
-                    selection = "AND CreateDate <= ?";
-                    selectionArgsList.add(String.valueOf(endDate.getTime()));
-                }
-            }
-            if(type != null){
-                if(selection != null){
-                    selection = "IsIncome = ?";
-                    selectionArgsList.add(type);
-                }else{
-                    selection = "AND IsIncome = ?";
-                    selectionArgsList.add(type);
-                }
-            }
-            if(categoryIdFilter != null){
-                if(selection != null){
-                    selection = "CategoryId = ?";
-                    selectionArgsList.add(categoryIdFilter);
-                }else{
-                    selection = "AND CategoryId = ?";
-                    selectionArgsList.add(categoryIdFilter);
-                }
-            }
-            String[] selectionArgs = new String[selectionArgsList.size()];
-            selectionArgs = selectionArgsList.toArray(selectionArgs);
-
+            selectionArgsList.add(String.format("%02d", month));
             String orderBy = "CreateDate DESC";
+            if(type != null){
+                selection = selection + " AND IsIncome = ?";
+                selectionArgsList.add(type);
+            }
             SQLiteDatabase st = getReadableDatabase();
+            String[] selectionArgs = selectionArgsList.toArray(new String[0]);
             Cursor cs = st.query(TABLE_TRANSACTIONS,null,selection,selectionArgs,null,null,orderBy);
             while (cs != null && cs.moveToNext()){
                 int id = cs.getInt(0);
@@ -398,20 +363,85 @@ public class MyDbContext extends SQLiteOpenHelper {
                 String price = cs.getString(3);
                 String isIncome = cs.getString(4);
                 String createDateStr = cs.getString(5);
-                Date date = new Date(createDateStr);
-                SimpleDateFormat outputFormat = new SimpleDateFormat(PATTERN, Locale.ENGLISH);
-                String formattedDate = outputFormat.format(date);
-                list.add(new Transaction(id,title,categoryId,price,isIncome,formattedDate));
+                String[] parts = createDateStr.split(" ");
+                String date = parts[0];
+                list.add(new Transaction(id,title,price,categoryId,isIncome,date));
             }
         }catch (Exception ex){
-            Log.e(TAG,"MyDbContext - getTransactionByFilter - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - getTransactionByDate - " + ex.getMessage());
         }
         return list;
     }
 
-    public Long getBalance(int month) {
+//    public List<Transaction> getTransactionByFilter(Date startDate, Date endDate, Boolean isIncomeFilter, String categoryIdFilter){
+//        List<Transaction> list = new ArrayList<>();
+//        String type = null;
+//        if(isIncomeFilter){
+//            type = "y";
+//        }else if(!isIncomeFilter){
+//            type = "N";
+//        }
+//        try{
+//            String selection = null;
+//            List<String> selectionArgsList = new ArrayList<>();
+//            if(startDate != null){
+//                selection = "CreateDate >= ?";
+//                selectionArgsList.add(String.valueOf(startDate.getTime()));
+//            }
+//            if(endDate != null){
+//                if(selection != null){
+//                    selection = "CreateDate <= ?";
+//                    selectionArgsList.add(String.valueOf(endDate.getTime()));
+//                }else{
+//                    selection = "AND CreateDate <= ?";
+//                    selectionArgsList.add(String.valueOf(endDate.getTime()));
+//                }
+//            }
+//            if(type != null){
+//                if(selection != null){
+//                    selection = "IsIncome = ?";
+//                    selectionArgsList.add(type);
+//                }else{
+//                    selection = "AND IsIncome = ?";
+//                    selectionArgsList.add(type);
+//                }
+//            }
+//            if(categoryIdFilter != null){
+//                if(selection != null){
+//                    selection = "CategoryId = ?";
+//                    selectionArgsList.add(categoryIdFilter);
+//                }else{
+//                    selection = "AND CategoryId = ?";
+//                    selectionArgsList.add(categoryIdFilter);
+//                }
+//            }
+//            String[] selectionArgs = new String[selectionArgsList.size()];
+//            selectionArgs = selectionArgsList.toArray(selectionArgs);
+//
+//            String orderBy = "CreateDate DESC";
+//            SQLiteDatabase st = getReadableDatabase();
+//            Cursor cs = st.query(TABLE_TRANSACTIONS,null,selection,selectionArgs,null,null,orderBy);
+//            while (cs != null && cs.moveToNext()){
+//                int id = cs.getInt(0);
+//                String title = cs.getString(1);
+//                String categoryId = cs.getString(2);
+//                String price = cs.getString(3);
+//                String isIncome = cs.getString(4);
+//                String createDateStr = cs.getString(5);
+//                Date date = new Date(createDateStr);
+//                SimpleDateFormat outputFormat = new SimpleDateFormat(PATTERN, Locale.ENGLISH);
+//                String formattedDate = outputFormat.format(date);
+//                list.add(new Transaction(id,title,categoryId,price,isIncome,formattedDate));
+//            }
+//        }catch (Exception ex){
+//            Log.e(TAG,"MyDbContext - getTransactionByFilter - " + ex.getMessage());
+//        }
+//        return list;
+//    }
+
+    public Long getBalance(int month, String type, String categoryID) {
         try {
-            List<Transaction> list = getTransactionByMonth(month);
+            List<Transaction> list = getTransactionByFilter(month,type,categoryID);
             if(list.size() != 0 ){
                 Long result = new Long(0);
                 for (Transaction item :
@@ -422,6 +452,9 @@ public class MyDbContext extends SQLiteOpenHelper {
                         result = result - Long.valueOf(item.getPrice());
                     }
                 }
+                if(type!= null && type.equals("EXPENSE")){
+                    return Math.abs(result);
+                }
                 return result;
             }
         } catch (Exception ex) {
@@ -429,4 +462,25 @@ public class MyDbContext extends SQLiteOpenHelper {
         }
         return Long.valueOf(0);
     }
+
+//    public Long getBalanceIntenal(int currentMonth, String type) {
+//        try {
+//            List<Transaction> list = getTransactionByType(currentMonth,type);
+//            if(list.size() != 0 ){
+//                Long result = new Long(0);
+//                for (Transaction item :
+//                        list) {
+//                    if(item.getIsIncome().toString().equals("INCOME")){
+//                        result = result + Long.valueOf(item.getPrice());
+//                    }else{
+//                        result = result - Long.valueOf(item.getPrice());
+//                    }
+//                }
+//                return result;
+//            }
+//        } catch (Exception ex) {
+//            Log.e(TAG, "MyDbContext - getBalance - " + ex.getMessage());
+//        }
+//        return Long.valueOf(0);
+//    }
 }
