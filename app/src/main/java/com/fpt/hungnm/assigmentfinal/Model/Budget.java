@@ -8,9 +8,9 @@ public class Budget {
     private String typeOfBudget;
     private String time;
     private String categotyId;
-    private Date createDate;
+    private String createDate;
 
-    public Budget(int id, String title, String typeOfBudget, String time, String categotyId, Date createDate) {
+    public Budget(int id, String title, String typeOfBudget, String time, String categotyId, String createDate) {
         this.id = id;
         this.title = title;
         this.typeOfBudget = typeOfBudget;
@@ -19,7 +19,7 @@ public class Budget {
         this.createDate = createDate;
     }
 
-    public Budget(String title, String typeOfBudget, String time, String categotyId, Date createDate) {
+    public Budget(String title, String typeOfBudget, String time, String categotyId, String createDate) {
         this.title = title;
         this.typeOfBudget = typeOfBudget;
         this.time = time;
@@ -70,11 +70,11 @@ public class Budget {
         this.categotyId = categotyId;
     }
 
-    public Date getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 }

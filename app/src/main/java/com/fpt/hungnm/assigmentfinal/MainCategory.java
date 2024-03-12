@@ -18,10 +18,12 @@ import com.fpt.hungnm.assigmentfinal.Adapter.RecylerViewAdapter;
 import com.fpt.hungnm.assigmentfinal.Dal.MyDbContext;
 import com.fpt.hungnm.assigmentfinal.Model.Category;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class MainCategory extends AppCompatActivity implements RecylerViewAdapter.ItemListener {
+    private static final String PATTERN = "yyyy-MM-dd";
     private RecylerViewAdapter adapter;
     private RecyclerView recyclerView;
     private static final String DATABASE_NAME = "MoneyManage.db";
@@ -195,7 +197,9 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
                     tvError.setText("Tên đã bị trùng");
                 }else{
                     Date currentDate = new Date();
-                    category.setCreateDate(currentDate);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
+                    String currentDateString = dateFormat.format(currentDate);
+                    category.setCreateDate(currentDateString);
                     dbContext.addCategory(category);
                     Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
                     reLoad();

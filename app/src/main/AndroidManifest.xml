@@ -25,16 +25,16 @@
             android:name=".MainCategory"
             android:exported="false" />
         <activity
-            android:name=".Expense_Add"
+            android:name=".InCome_Add"
             android:exported="false" />
         <activity
-            android:name=".Home"
+            android:name=".Expense_Add"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".InCome_Add"
+            android:name=".Home"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -9,9 +9,9 @@ public class Transaction {
     private String category;
 
     private String isIncome;
-    private Date createDate;
+    private String createDate;
 
-    public Transaction(int id, String title, String price, String category, String isIncome, Date createDate) {
+    public Transaction(int id, String title, String price, String category, String isIncome, String createDate) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -20,7 +20,7 @@ public class Transaction {
         this.createDate = createDate;
     }
 
-    public Transaction(String title, String price, String category, String isIncome, Date createDate) {
+    public Transaction(String title, String price, String category, String isIncome, String createDate) {
         this.title = title;
         this.price = price;
         this.category = category;
@@ -71,11 +71,11 @@ public class Transaction {
         this.isIncome = isIncome;
     }
 
-    public Date getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 }
