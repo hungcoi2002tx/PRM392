@@ -2,6 +2,7 @@ package com.fpt.hungnm.assigmentfinal;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,6 +69,8 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
             LinearLayoutManager manager = new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(adapter);
+            RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+            recyclerView.addItemDecoration(itemDecoration);
         }catch (Exception ex){
             Log.e(TAG, "Home - setAdapter - " + ex.getMessage());
         }
@@ -103,15 +106,25 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
             btnGoIncome.setOnClickListener(this::goToIncome);
             btnGoExpense.setOnClickListener(this::goToExpense);
             spMonth.setOnItemSelectedListener(this);
+            btnTransaction.setOnClickListener(this::goToTransaction);
         }catch (Exception ex){
             Log.e(TAG, "Home - bindingAction - " + ex.getMessage());
+        }
+    }
+
+    private void goToTransaction(View view) {
+        try{
+            Intent i = new Intent(this,MainTransaction.class);
+            startActivityForResult(i,REQUEST_CODE);
+        }catch (Exception ex){
+            Log.e(TAG, "Home - goToTransaction - " + ex.getMessage());
         }
     }
 
     private void goToExpense(View view) {
         try{
             Intent i = new Intent(this,Expense_Add.class);
-            startActivity(i);
+            startActivityForResult(i,REQUEST_CODE);
         }catch (Exception ex){
             Log.e(TAG, "Home - goToExpense - " + ex.getMessage());
         }

@@ -16,6 +16,9 @@
             android:name=".Login"
             android:exported="false" />
         <activity
+            android:name=".Home"
+            android:exported="false" />
+        <activity
             android:name=".Create_Budget"
             android:exported="false" />
         <activity
@@ -34,7 +37,7 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".Home"
+            android:name=".MainTransaction"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
