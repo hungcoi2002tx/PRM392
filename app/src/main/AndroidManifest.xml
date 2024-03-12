@@ -13,16 +13,13 @@
         android:theme="@style/Theme.AssigmentFinal"
         tools:targetApi="31">
         <activity
-            android:name=".MainCategory"
+            android:name=".Login"
             android:exported="false" />
         <activity
             android:name=".Create_Budget"
             android:exported="false" />
         <activity
             android:name=".MainBudget"
-            android:exported="false" />
-        <activity
-            android:name=".Budget"
             android:exported="false" />
         <activity
             android:name=".InCome_Add"
@@ -37,7 +34,7 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".Login"
+            android:name=".MainCategory"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

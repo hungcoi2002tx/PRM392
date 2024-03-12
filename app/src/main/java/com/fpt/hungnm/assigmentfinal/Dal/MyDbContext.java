@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MyDbContext extends SQLiteOpenHelper {
+    private static final String TAG = "HungnmError";
     private static final String DATABASE_NAME = "MoneyManage.db";
     private static final String TABLE_TRANSACTIONS = "transactions";
     private static final String TABLE_CATEGORY = "categories";
@@ -90,7 +91,7 @@ public class MyDbContext extends SQLiteOpenHelper {
                 list.add(new Transaction(id,title,categoryId,price,isIncome,createDate));
             }
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - getAllTransition - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - getAllTransition - " + ex.getMessage());
         }
         return list;
     }
@@ -111,7 +112,7 @@ public class MyDbContext extends SQLiteOpenHelper {
                 list.add(new Category(id,title,isIncome,createDate));
             }
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - getAllCategory - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - getAllCategory - " + ex.getMessage());
         }
         return list;
     }
@@ -133,7 +134,7 @@ public class MyDbContext extends SQLiteOpenHelper {
                 list.add(new Budget(id,title,typeOfBudget,time,categoryId,createDate));
             }
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - getAllBudget - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - getAllBudget - " + ex.getMessage());
         }
         return list;
     }
@@ -152,7 +153,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             SQLiteDatabase sqLiteDatabase = getWritableDatabase();
             result = sqLiteDatabase.insert(TABLE_TRANSACTIONS,null,values);
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - addTransactions - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - addTransactions - " + ex.getMessage());
         }
         return  result;
     }
@@ -175,7 +176,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             String[] whereArgs = {Integer.toString(transaction.getId())};
             result = sqLiteDatabase.update(TABLE_TRANSACTIONS,values,whereClause,whereArgs);
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - updateTransaction - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - updateTransaction - " + ex.getMessage());
         }
         return result;
     }
@@ -188,7 +189,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             int rowsDeleted = db.delete(TABLE_TRANSACTIONS, whereClause, whereArgs);
             return rowsDeleted > 0;
         } catch (Exception ex) {
-            Log.e("HungnmError", "MyDbContext - deleteTransaction - " + ex.getMessage());
+            Log.e(TAG, "MyDbContext - deleteTransaction - " + ex.getMessage());
             return false;
         }
     }
@@ -205,7 +206,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             SQLiteDatabase sqLiteDatabase = getWritableDatabase();
             result = sqLiteDatabase.insert(TABLE_CATEGORY,null,values);
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - addCategory - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - addCategory - " + ex.getMessage());
         }
         return  result;
     }
@@ -226,7 +227,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             String[] whereArgs = {Integer.toString(item.getId())};
             result = sqLiteDatabase.update(TABLE_CATEGORY,values,whereClause,whereArgs);
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - updateCategory - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - updateCategory - " + ex.getMessage());
         }
         return result;
     }
@@ -239,7 +240,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             int rowsDeleted = db.delete(TABLE_CATEGORY, whereClause, whereArgs);
             return rowsDeleted > 0;
         } catch (Exception ex) {
-            Log.e("HungnmError", "MyDbContext - deleteCategory - " + ex.getMessage());
+            Log.e(TAG, "MyDbContext - deleteCategory - " + ex.getMessage());
             return false;
         }
     }
@@ -258,7 +259,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             SQLiteDatabase sqLiteDatabase = getWritableDatabase();
             result = sqLiteDatabase.insert(TABLE_BUDGET,null,values);
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - addCategory - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - addCategory - " + ex.getMessage());
         }
         return  result;
     }
@@ -279,7 +280,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             String[] whereArgs = {Integer.toString(item.getId())};
             result = sqLiteDatabase.update(TABLE_BUDGET,values,whereClause,whereArgs);
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - updateCategory - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - updateCategory - " + ex.getMessage());
         }
         return result;
     }
@@ -292,7 +293,7 @@ public class MyDbContext extends SQLiteOpenHelper {
             int rowsDeleted = db.delete(TABLE_BUDGET, whereClause, whereArgs);
             return rowsDeleted > 0;
         } catch (Exception ex) {
-            Log.e("HungnmError", "MyDbContext - deleteBudget - " + ex.getMessage());
+            Log.e(TAG, "MyDbContext - deleteBudget - " + ex.getMessage());
             return false;
         }
     }
@@ -318,7 +319,7 @@ public class MyDbContext extends SQLiteOpenHelper {
                 list.add(new Transaction(id,title,categoryId,price,isIncome,createDate));
             }
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - getTransactionByDate - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - getTransactionByDate - " + ex.getMessage());
         }
         return list;
     }
@@ -382,7 +383,7 @@ public class MyDbContext extends SQLiteOpenHelper {
                 list.add(new Transaction(id,title,categoryId,price,isIncome,createDate));
             }
         }catch (Exception ex){
-            Log.e("HungnmError","MyDbContext - getTransactionByFilter - " + ex.getMessage());
+            Log.e(TAG,"MyDbContext - getTransactionByFilter - " + ex.getMessage());
         }
         return list;
     }
