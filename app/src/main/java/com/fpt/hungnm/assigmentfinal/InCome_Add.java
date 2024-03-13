@@ -41,6 +41,8 @@ public class InCome_Add extends AppCompatActivity {
     private TextView tvError;
     private ImageView imgBackToHome;
 
+    private ImageView btnAddCategory;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,12 +91,19 @@ public class InCome_Add extends AppCompatActivity {
             imgBackToHome.setOnClickListener(this::onBackToHome);
             btnSave.setOnClickListener(this::onSaveClick);
             imgAddCategory.setOnClickListener(this::onAddCategory);
+
         }catch (Exception ex){
             Log.e(TAG, "InCome_Add - bindingAction - " + ex.getMessage());
         }
     }
 
     private void onAddCategory(View view) {
+        try{
+            Intent i = new Intent(this,MainCategory.class);
+            startActivity(i);
+        }catch (Exception ex){
+            Log.e(TAG, "InCome_Add - bindingAction - " + ex.getMessage());
+        }
     }
 
     public Category getCategoryByTitle(String title) {
@@ -173,5 +182,11 @@ public class InCome_Add extends AppCompatActivity {
         }catch (Exception ex){
             Log.e(TAG, "InCome_Add - bindingView - " + ex.getMessage());
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindingData();
     }
 }

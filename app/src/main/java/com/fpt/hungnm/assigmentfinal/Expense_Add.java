@@ -42,6 +42,8 @@ public class Expense_Add extends AppCompatActivity {
 
     private ImageView imgBackToHome;
 
+    private Transaction transaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
@@ -50,8 +52,33 @@ public class Expense_Add extends AppCompatActivity {
             bindingView();
             bindingAction();
             bindingData();
+            receiverIntent();
         }catch (Exception ex){
             Log.e(TAG, "Expense_Add - onCreate - " + ex.getMessage());
+        }
+    }
+
+    private void receiverIntent() {
+        try{
+            Intent intent = getIntent();
+            if(intent.hasExtra("id")){
+                int id = intent.getIntExtra("id",0);
+                transaction = myDbContext.getTransactionById(id);
+                btnSave.setText("Update");
+                edtExpenseDes.setText(transaction.getTitle());
+                edtExpenseMoney.setText(transaction.getPrice());
+                int i = 0;
+                for (Category category :
+                        categories) {
+                    if (category.getId() == Integer.parseInt(transaction.getCategory())) {
+                        spinnerCategory.setSelection(i);
+                        break;
+                    }
+                    i++;
+                }
+            }
+        }catch (Exception ex){
+            Log.e(TAG, "Expense_Add - receiverIntent - " + ex.getMessage());
         }
     }
 
@@ -79,9 +106,19 @@ public class Expense_Add extends AppCompatActivity {
         try{
             btnSave.setOnClickListener(this::onSaveClick);
             imgBackToHome.setOnClickListener(this::onBackToHome);
-
+            imgAddCategory.setOnClickListener(this::onGoToCategory);
         }catch (Exception ex){
             Log.e(TAG, "Expense_Add - bindingAction - " + ex.getMessage());
+        }
+    }
+
+    private void onGoToCategory(View view) {
+        try{
+            Intent i = new Intent(this, MainCategory.class);
+            startActivity(i);
+
+        }catch (Exception ex){
+            Log.e(TAG, "Expense_Add - onGoToCategory - " + ex.getMessage());
         }
     }
 
@@ -109,6 +146,10 @@ public class Expense_Add extends AppCompatActivity {
 
     private void onSaveClick(View view) {
         try{
+            if(transaction.getId() != 0){
+                onUpdateTransaction();
+                return;
+            }
             if(!checkValid()){
                 tvError.setText("Không được để trường nào trống");
             }else{
@@ -132,6 +173,29 @@ public class Expense_Add extends AppCompatActivity {
             }
         }catch (Exception ex){
             Log.e(TAG, "Expense_Add - OnSaveClick - " + ex.getMessage());
+        }
+    }
+
+    private void onUpdateTransaction() {
+        try{
+            if(!checkValid()){
+                tvError.setText("Không được để trường nào trống");
+            }else{
+                Category category = getCategoryByTitle(spinnerCategory.getSelectedItem().toString());
+                transaction.setCategory(String.valueOf(category.getId()));
+                transaction.setPrice(String.valueOf(edtExpenseMoney.getText()));
+                transaction.setTitle(edtExpenseDes.getText().toString());
+                transaction.setIsIncome("EXPENSE");
+                long result = myDbContext.updateTransaction(transaction);
+                if(result == -1){
+                    Toast.makeText(this, "Update thất bại", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, "Update thành công", Toast.LENGTH_SHORT).show();
+                    resetInput();
+                }
+            }
+        }catch (Exception ex){
+            Log.e(TAG, "Expense_Add - onUpdateTransaction - " + ex.getMessage());
         }
     }
 
@@ -170,5 +234,11 @@ public class Expense_Add extends AppCompatActivity {
         }catch (Exception ex){
             Log.e(TAG, "Expense_Add - resetInput - " + ex.getMessage());
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindingData();
     }
 }

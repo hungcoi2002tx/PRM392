@@ -463,6 +463,30 @@ public class MyDbContext extends SQLiteOpenHelper {
         return Long.valueOf(0);
     }
 
+    public Transaction getTransactionById(int _id) {
+        try{
+            String selection = "Id = ?";
+            String[] selectionArgs = {String.valueOf(_id)};
+            String orderBy = "CreateDate DESC";
+            SQLiteDatabase st = getReadableDatabase();
+            Cursor cs = st.query(TABLE_TRANSACTIONS,null,selection,selectionArgs,null,null,orderBy);
+            while (cs != null && cs.moveToNext()){
+                int id = cs.getInt(0);
+                String title = cs.getString(1);
+                String categoryId = cs.getString(2);
+                String price = cs.getString(3);
+                String isIncome = cs.getString(4);
+                String createDateStr = cs.getString(5);
+                String[] parts = createDateStr.split(" ");
+                String date = parts[0];
+                return (new Transaction(id,title,price,categoryId,isIncome,date));
+            }
+        }catch (Exception ex){
+            Log.e(TAG,"MyDbContext - getTransactionByDate - " + ex.getMessage());
+        }
+        return null;
+    }
+
 //    public Long getBalanceIntenal(int currentMonth, String type) {
 //        try {
 //            List<Transaction> list = getTransactionByType(currentMonth,type);
