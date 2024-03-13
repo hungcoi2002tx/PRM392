@@ -31,6 +31,7 @@ public class TransitionRecyclerViewAdapter extends RecyclerView.Adapter<Transiti
         this.transitionListener = transitionListener;
     }
 
+    private OnLongClickTransactionListener onLongClickTransactionListener;
     private static final String INCOME = "INCOME";
 
     public TransitionRecyclerViewAdapter() {
@@ -70,13 +71,21 @@ public class TransitionRecyclerViewAdapter extends RecyclerView.Adapter<Transiti
                 int colorRed = ContextCompat.getColor(holder.itemView.getContext(), R.color.red);
                 holder.tvPrice.setTextColor(colorRed);
             }
+
         }catch (Exception ex){
             Log.e(TAG, "TransitionRecyclerViewAdapter - onBindViewHolder - " + ex.getMessage());
         }
     }
 
+    public void setOnLongClickTransactionListener(OnLongClickTransactionListener onLongClickTransactionListener) {
+        this.onLongClickTransactionListener = onLongClickTransactionListener;
+    }
+
     public interface TransitionListener{
         void onItemClick(View view, int position);
+    }
+    public interface OnLongClickTransactionListener {
+        void onLongClick(View view, int position);
     }
 
     @Override
@@ -84,7 +93,7 @@ public class TransitionRecyclerViewAdapter extends RecyclerView.Adapter<Transiti
         return list.size();
     }
 
-    public class TransitionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class TransitionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
         private TextView tvTitle;
         private TextView tvType;
         private TextView tvTime;
@@ -93,6 +102,7 @@ public class TransitionRecyclerViewAdapter extends RecyclerView.Adapter<Transiti
             super(itemView);
             bindingView();
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         private void bindingView() {
@@ -107,6 +117,16 @@ public class TransitionRecyclerViewAdapter extends RecyclerView.Adapter<Transiti
             if(transitionListener != null){
                 transitionListener.onItemClick(itemView, getAdapterPosition());
             }
+        }
+
+
+        @Override
+        public boolean onLongClick(View v) {
+            if(onLongClickTransactionListener != null){
+                onLongClickTransactionListener.onLongClick(itemView, getAdapterPosition());
+                return true;
+            }
+            return false;
         }
     }
 }

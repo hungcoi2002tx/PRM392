@@ -2,13 +2,17 @@ package com.fpt.hungnm.assigmentfinal;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -24,7 +28,7 @@ import com.fpt.hungnm.assigmentfinal.Model.Transaction;
 import java.util.Date;
 import java.util.List;
 
-public class Home extends AppCompatActivity implements TransitionRecyclerViewAdapter.TransitionListener, AdapterView.OnItemSelectedListener {
+public class Home extends AppCompatActivity implements TransitionRecyclerViewAdapter.TransitionListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemLongClickListener {
     private TransitionRecyclerViewAdapter adapter;
 
     private RecyclerView recyclerView;
@@ -52,14 +56,34 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
         try{
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_home);
+            
             bindingView();
             initData();
             bindingAction();
+            reciveIntent();
             setAdapter();
+
         }catch (Exception ex){
             Log.e(TAG, "Home - onCreate - " + ex.getMessage());
         }
     }
+
+    private void reciveIntent() {
+        try{
+            btnHome.setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.SRC_IN);
+        }catch (Exception ex){
+            Log.e(TAG, "Home - reciveIntent - " + ex.getMessage());
+        }
+    }
+
+    private void goIntent(){
+        try{
+            btnHome.setColorFilter(ContextCompat.getColor(this, R.color.xam), PorterDuff.Mode.SRC_IN);
+        }catch (Exception ex){
+            Log.e(TAG, "Home - reciveIntent - " + ex.getMessage());
+        }
+    }
+
     private void setAdapter() {
         try{
             List<Transaction> list = dbContext.getAllTransition();
@@ -68,6 +92,8 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
             LinearLayoutManager manager = new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(adapter);
+            RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+            recyclerView.addItemDecoration(itemDecoration);
         }catch (Exception ex){
             Log.e(TAG, "Home - setAdapter - " + ex.getMessage());
         }
@@ -103,15 +129,27 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
             btnGoIncome.setOnClickListener(this::goToIncome);
             btnGoExpense.setOnClickListener(this::goToExpense);
             spMonth.setOnItemSelectedListener(this);
+            btnTransaction.setOnClickListener(this::goToTransaction);
         }catch (Exception ex){
             Log.e(TAG, "Home - bindingAction - " + ex.getMessage());
         }
     }
 
+    private void goToTransaction(View view) {
+        try{
+            goIntent();
+            Intent i = new Intent(this,MainTransaction.class);
+            startActivityForResult(i,REQUEST_CODE);
+        }catch (Exception ex){
+            Log.e(TAG, "Home - goToTransaction - " + ex.getMessage());
+        }
+    }
+
     private void goToExpense(View view) {
         try{
+            goIntent();
             Intent i = new Intent(this,Expense_Add.class);
-            startActivity(i);
+            startActivityForResult(i,REQUEST_CODE);
         }catch (Exception ex){
             Log.e(TAG, "Home - goToExpense - " + ex.getMessage());
         }
@@ -121,6 +159,7 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
         try{
             Intent i = new Intent(this, InCome_Add.class);
             startActivityForResult(i,REQUEST_CODE);
+            goIntent();
         }catch (Exception ex){
             Log.e(TAG, "Home - goToIncome - " + ex.getMessage());
         }
@@ -163,9 +202,11 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
             if(transactionClicked.getIsIncome().equals("INCOME")){
                 Intent i = new Intent(this, InCome_Add.class);
                 i.putExtra("id",transactionClicked.getId());
+                startActivityForResult(i,REQUEST_CODE);
             }else{
                 Intent i = new Intent(this, Expense_Add.class);
                 i.putExtra("id",transactionClicked.getId());
+                startActivityForResult(i,REQUEST_CODE);
             }
         }catch (Exception ex){
             Log.e(TAG, "Home.Java - onItemClick - " + ex.getMessage());
@@ -178,7 +219,6 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
             String selectedItem = parent.getItemAtPosition(position).toString();
             month = position+ 1;
             getData();
-            Toast.makeText(this, "Bạn đã chọn: " + selectedItem, Toast.LENGTH_SHORT).show();
         }catch (Exception ex){
             Log.e(TAG, "Home.Java - onItemSelected - " + ex.getMessage());
         }
@@ -187,5 +227,18 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(this, "longcliock" + position +"/"+id , Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        btnHome.setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.SRC_IN);
     }
 }

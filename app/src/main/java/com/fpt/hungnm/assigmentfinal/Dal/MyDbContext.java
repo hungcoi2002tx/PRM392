@@ -186,7 +186,7 @@ public class MyDbContext extends SQLiteOpenHelper {
         }catch (Exception ex){
             Log.e(TAG,"MyDbContext - addTransactions - " + ex.getMessage());
         }
-        return  result;
+        return result;
     }
 
     public long updateTransaction(Transaction transaction){
@@ -438,6 +438,18 @@ public class MyDbContext extends SQLiteOpenHelper {
 //        }
 //        return list;
 //    }
+public static String convertDateFormat(String dateString) {
+    SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    try {
+        Date date = inputDateFormat.parse(dateString);
+        String result =  outputDateFormat.format(date);
+        return ("'" + result + "'");
+    } catch (ParseException e) {
+        e.printStackTrace();
+        return null;
+    }
+}
 
     public Long getBalance(int month, String type, String categoryID) {
         try {
@@ -463,6 +475,93 @@ public class MyDbContext extends SQLiteOpenHelper {
         return Long.valueOf(0);
     }
 
+    public Transaction getTransactionById(int _id) {
+        try{
+            String selection = "Id = ?";
+            String[] selectionArgs = {String.valueOf(_id)};
+            String orderBy = "CreateDate DESC";
+            SQLiteDatabase st = getReadableDatabase();
+            Cursor cs = st.query(TABLE_TRANSACTIONS,null,selection,selectionArgs,null,null,orderBy);
+            while (cs != null && cs.moveToNext()){
+                int id = cs.getInt(0);
+                String title = cs.getString(1);
+                String categoryId = cs.getString(2);
+                String price = cs.getString(3);
+                String isIncome = cs.getString(4);
+                String createDateStr = cs.getString(5);
+                String[] parts = createDateStr.split(" ");
+                String date = parts[0];
+                return (new Transaction(id,title,price,categoryId,isIncome,date));
+            }
+        }catch (Exception ex){
+            Log.e(TAG,"MyDbContext - getTransactionByDate - " + ex.getMessage());
+        }
+        return null;
+    }
+
+    public List<Transaction> getTransactionSearch(String title, String categoryId, String fromDate, String toDate) {
+        List<Transaction> list = new ArrayList<>();
+        try{
+            String selection = null;
+            List<String> selectionArgsList = new ArrayList<>();
+            if(!fromDate.equals("")){
+                selection = "CreateDate >= " + convertDateFormat(fromDate);
+                selectionArgsList.add(convertDateFormat(fromDate));
+            }
+            if(!toDate.equals("")){
+                if(selection == null){
+                    selection = " CreateDate <= " + convertDateFormat(toDate);
+                    selectionArgsList.add(convertDateFormat(toDate));
+                }else{
+                    selection = selection + " AND CreateDate <= " + convertDateFormat(toDate);
+                    selectionArgsList.add(convertDateFormat(toDate));
+                }
+            }
+
+            if(!categoryId.equals("ALL")){
+                if(selection == null){
+                    selection = "CategoryId = " + getStringSQL(categoryId);
+                    selectionArgsList.add(categoryId);
+                }else{
+                    selection =selection + " AND CategoryId = " + getStringSQL(categoryId);
+                    selectionArgsList.add(categoryId);
+                }
+            }
+
+            if(!title.equals("")){
+                if(selection == null){
+                    selection = "Title = " + getStringSQL(title);
+                    selectionArgsList.add(title);
+                }else{
+                    selection = selection + " AND Title = " + getStringSQL(title);
+                    selectionArgsList.add(title);
+                }
+            }
+            String[] selectionArgs = new String[selectionArgsList.size()];
+            selectionArgs = selectionArgsList.toArray(selectionArgs);
+
+            String orderBy = "CreateDate DESC";
+            SQLiteDatabase st = getReadableDatabase();
+            String query = "SELECT * FROM transactions where "+ selection + " ORDER BY CreateDate DESC";
+            //Cursor cs = st.query(TABLE_TRANSACTIONS,null,selection,selectionArgs,null,null,orderBy);
+            Cursor cs = st.rawQuery(query,null);
+            while (cs != null && cs.moveToNext()){
+                int id = cs.getInt(0);
+                String _title = cs.getString(1);
+                String _categoryId = cs.getString(2);
+                String price = cs.getString(3);
+                String isIncome = cs.getString(4);
+                String createDateStr = cs.getString(5);
+                String[] parts = createDateStr.split(" ");
+                String date = parts[0];
+                list.add(new Transaction(id,_title,price,_categoryId,isIncome,date));
+            }
+        }catch (Exception ex){
+            Log.e(TAG,"MyDbContext - getTransactionSearch - " + ex.getMessage());
+        }
+        return list;
+    }
+
 //    public Long getBalanceIntenal(int currentMonth, String type) {
 //        try {
 //            List<Transaction> list = getTransactionByType(currentMonth,type);
@@ -483,4 +582,26 @@ public class MyDbContext extends SQLiteOpenHelper {
 //        }
 //        return Long.valueOf(0);
 //    }
+    public String getStringSQL(String s){
+        return "'" + s + "' ";
+    }
+    public void Test(){
+        try{
+            String sqlQuery = " SELECT * FROM transactions where CreateDate >= 2024-03-12 ";
+            SQLiteDatabase st = getReadableDatabase();
+            Cursor cs = st.rawQuery(sqlQuery, null);
+            while (cs != null && cs.moveToNext()){
+                int id = cs.getInt(0);
+                String title = cs.getString(1);
+                String categoryId = cs.getString(2);
+                String price = cs.getString(3);
+                String isIncome = cs.getString(4);
+                String createDateStr = cs.getString(5);
+                String[] parts = createDateStr.split(" ");
+                String date = parts[0];
+            }
+        }catch (Exception ex){
+            Log.e(TAG,"MyDbContext - getTransactionByDate - " + ex.getMessage());
+        }
+    }
 }
