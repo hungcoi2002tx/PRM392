@@ -117,7 +117,7 @@ public class MyDbContext extends SQLiteOpenHelper {
                 String createDateStr = cs.getString(3);
                 String[] parts = createDateStr.split(" ");
                 String date = parts[0];
-                list.add(new Category(id,title,isIncome,date));
+                list.add(new Category(id,title,isIncome,date,Long.valueOf(0)));
             }
         }catch (Exception ex){
             Log.e(TAG,"MyDbContext - getAllCategory - " + ex.getMessage());
