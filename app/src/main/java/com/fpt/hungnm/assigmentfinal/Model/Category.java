@@ -8,6 +8,24 @@ public class Category {
     private String isIncome;
     private String createDate;
 
+    public Long getTotal() {
+        return total;
+    }
+
+    public void setTotal(Long total) {
+        this.total = total;
+    }
+
+    private Long total;
+
+    public Category(int id, String title, String isIncome, String createDate, Long total) {
+        this.id = id;
+        this.title = title;
+        this.isIncome = isIncome;
+        this.createDate = createDate;
+        this.total = total;
+    }
+
     public Category(int id, String title, String isIncome, String createDate) {
         this.id = id;
         this.title = title;

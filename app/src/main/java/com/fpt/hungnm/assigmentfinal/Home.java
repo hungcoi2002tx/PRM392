@@ -130,8 +130,19 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
             btnGoExpense.setOnClickListener(this::goToExpense);
             spMonth.setOnItemSelectedListener(this);
             btnTransaction.setOnClickListener(this::goToTransaction);
+            btnAccount.setOnClickListener(this::goToStatistic);
         }catch (Exception ex){
             Log.e(TAG, "Home - bindingAction - " + ex.getMessage());
+        }
+    }
+
+    private void goToStatistic(View view) {
+        try{
+            goIntent();
+            Intent i = new Intent(this,MainStatitics.class);
+            startActivityForResult(i,REQUEST_CODE);
+        }catch (Exception ex){
+            Log.e(TAG, "Home - goToStatistic - " + ex.getMessage());
         }
     }
 
