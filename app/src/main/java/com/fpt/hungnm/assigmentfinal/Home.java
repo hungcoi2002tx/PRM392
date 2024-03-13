@@ -56,6 +56,7 @@ public class Home extends AppCompatActivity implements TransitionRecyclerViewAda
         try{
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_home);
+            
             bindingView();
             initData();
             bindingAction();
