@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -37,9 +39,13 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
     private Button btnDelete;
     private TextView tvError;
 
+    private ImageView btnBack;
+
     private RecylerViewAdapter.ItemListener listener;
 
     private Category categoryClicked = new Category();
+
+    private String pageBack;
 
     private MyDbContext dbContext;
     @Override
@@ -50,8 +56,28 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
             bindingView();
             bindingAction();
             setAdapter();
+            reciverIntent();
         }catch (Exception ex){
             Log.e(TAG, "MainCategory - onCreate - " + ex.getMessage());
+        }
+    }
+
+    private void reciverIntent() {
+        try{
+            Intent intent = getIntent();
+            if(intent.hasExtra("type")){
+                String type = intent.getStringExtra("type");
+                if(type.equals("INCOME")){
+                    rbIncome.setChecked(true);
+                    pageBack = "INCOME";
+                }else{
+                    rbExpense.setChecked(true);
+                    pageBack = "EXPENSE";
+                }
+
+            }
+        }catch (Exception ex){
+            Log.e(TAG, "MainCategory - reciverIntent - " + ex.getMessage());
         }
     }
 
@@ -89,6 +115,23 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
             btnAdd.setOnClickListener(this::onAddClick);
             btnUpdate.setOnClickListener(this::onUpdateClick);
             btnDelete.setOnClickListener(this::onDeleteClick);
+            btnBack.setOnClickListener(this::onBackClick);
+        }catch (Exception ex){
+            Log.e(TAG, "MainCategory - bindingAction - " + ex.getMessage());
+        }
+    }
+
+    private void onBackClick(View view) {
+        try{
+            if(pageBack =="INCOME"){
+                pageBack ="";
+                Intent i = new Intent(this, InCome_Add.class);
+                startActivity(i);
+            }else{
+                pageBack ="";
+                Intent i = new Intent(this, Expense_Add.class);
+                startActivity(i);
+            }
         }catch (Exception ex){
             Log.e(TAG, "MainCategory - bindingAction - " + ex.getMessage());
         }
@@ -225,7 +268,7 @@ public class MainCategory extends AppCompatActivity implements RecylerViewAdapte
             dbContext = new MyDbContext(this);
             recyclerView = findViewById(R.id.rcv_category);
             adapter = new RecylerViewAdapter();
-
+            btnBack = findViewById(R.id.img_categoryback);
             btnUpdate.setEnabled(false);
             btnDelete.setEnabled(false);
         }catch (Exception ex){

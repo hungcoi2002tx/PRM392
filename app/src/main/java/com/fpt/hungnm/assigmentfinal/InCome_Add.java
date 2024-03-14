@@ -41,8 +41,7 @@ public class InCome_Add extends AppCompatActivity {
     private TextView tvError;
     private ImageView imgBackToHome;
 
-    private ImageView btnAddCategory;
-
+    private Transaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +51,33 @@ public class InCome_Add extends AppCompatActivity {
             bindingView();
             bindingAction();
             bindingData();
+            receiverIntent();
         }catch (Exception ex){
             Log.e(TAG, "InCome_Add - onCreate - " + ex.getMessage());
+        }
+    }
+
+    private void receiverIntent() {
+        try{
+            Intent intent = getIntent();
+            if(intent.hasExtra("id")){
+                int id = intent.getIntExtra("id",0);
+                transaction = myDbContext.getTransactionById(id);
+                btnSave.setText("Update");
+                edtDescription.setText(transaction.getTitle());
+                edtMoney.setText(transaction.getPrice());
+                int i = 0;
+                for (Category category :
+                        categories) {
+                    if (category.getId() == Integer.parseInt(transaction.getCategory())) {
+                        spCategory.setSelection(i+1);
+                        break;
+                    }
+                    i++;
+                }
+            }
+        }catch (Exception ex){
+            Log.e(TAG, "Expense_Add - receiverIntent - " + ex.getMessage());
         }
     }
 
@@ -100,6 +124,7 @@ public class InCome_Add extends AppCompatActivity {
     private void onAddCategory(View view) {
         try{
             Intent i = new Intent(this,MainCategory.class);
+            i.putExtra("type","INCOME");
             startActivity(i);
         }catch (Exception ex){
             Log.e(TAG, "InCome_Add - bindingAction - " + ex.getMessage());
@@ -123,23 +148,39 @@ public class InCome_Add extends AppCompatActivity {
             if(!checkValid()){
                 tvError.setText("Không được để trường nào trống");
             }else{
-                Transaction transaction = new Transaction();
-                Category category = getCategoryByTitle(spCategory.getSelectedItem().toString());
-                transaction.setCategory(String.valueOf(category.getId()));
-                transaction.setPrice(String.valueOf(edtMoney.getText()));
-                transaction.setTitle(edtDescription.getText().toString());
-                transaction.setIsIncome("INCOME");
-                Date currentDate = new Date();
-                SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
-                String currentDateString = dateFormat.format(currentDate);
-                transaction.setCreateDate(currentDateString);
-                long result = myDbContext.addTransaction(transaction);
-                if(result == -1){
-                    Toast.makeText(this, "Thêm thất bại", Toast.LENGTH_SHORT).show();
+                if(transaction.getId() == 0){
+                    Transaction transaction = new Transaction();
+                    Category category = getCategoryByTitle(spCategory.getSelectedItem().toString());
+                    transaction.setCategory(String.valueOf(category.getId()));
+                    transaction.setPrice(String.valueOf(edtMoney.getText()));
+                    transaction.setTitle(edtDescription.getText().toString());
+                    transaction.setIsIncome("INCOME");
+                    Date currentDate = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
+                    String currentDateString = dateFormat.format(currentDate);
+                    transaction.setCreateDate(currentDateString);
+                    long result = myDbContext.addTransaction(transaction);
+                    if(result == -1){
+                        Toast.makeText(this, "Thêm thất bại", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+                        resetInput();
+                    }
                 }else{
-                    Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
-                    resetInput();
+                    Category category = getCategoryByTitle(spCategory.getSelectedItem().toString());
+                    transaction.setCategory(String.valueOf(category.getId()));
+                    transaction.setPrice(String.valueOf(edtMoney.getText()));
+                    transaction.setTitle(edtDescription.getText().toString());
+                    transaction.setIsIncome("INCOME");
+                    long result = myDbContext.updateTransaction(transaction);
+                    if(result == -1){
+                        Toast.makeText(this, "Update thất bại", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(this, "Update thành công", Toast.LENGTH_SHORT).show();
+                        resetInput();
+                    }
                 }
+
             }
 
         }catch (Exception ex){
@@ -179,6 +220,7 @@ public class InCome_Add extends AppCompatActivity {
             tvNoCategories = findViewById(R.id.tv_income_nocategory);
             imgAddCategory = findViewById(R.id.img_income_add_category);
             imgBackToHome = findViewById(R.id.img_income_back);
+            transaction = new Transaction();
         }catch (Exception ex){
             Log.e(TAG, "InCome_Add - bindingView - " + ex.getMessage());
         }
@@ -187,6 +229,8 @@ public class InCome_Add extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        bindingData();
+        if(transaction.getId() == 0){
+            bindingData();
+        }
     }
 }

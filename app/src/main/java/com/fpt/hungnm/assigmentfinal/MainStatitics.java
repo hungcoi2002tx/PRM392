@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.fpt.hungnm.assigmentfinal.Dal.MyDbContext;
@@ -18,6 +20,9 @@ import com.fpt.hungnm.assigmentfinal.Model.Category;
 import com.fpt.hungnm.assigmentfinal.Model.Transaction;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -44,6 +49,8 @@ public class MainStatitics extends AppCompatActivity implements AdapterView.OnIt
     private MyDbContext dbContext;
 
     private int month;
+
+    private ListView listView;
 
 
     @Override
@@ -125,6 +132,32 @@ public class MainStatitics extends AppCompatActivity implements AdapterView.OnIt
             pieChart.getDescription().setEnabled(false);
             pieChart.animateY(1000);
             pieChart.invalidate();
+
+            ArrayList<BarEntry> visitors = new ArrayList<>();
+            for (Category item :
+                    categoryIncome) {
+                visitors.add(new BarEntry(item.getId(),item.getTotal()));
+            }
+            BarDataSet barDataSet = new BarDataSet(visitors,"Visitors");
+            barDataSet.setColors(generateRandomColors(5));
+            barDataSet.setValueTextColor(Color.BLACK);
+            barDataSet.setValueTextSize(16f);
+
+            BarData barData = new BarData(barDataSet);
+
+            barChart.setFitBars(true);
+            barChart.setData(barData);
+            barChart.animateY(2000);
+
+            ArrayList<String> dataList = new ArrayList<>();
+            for (Category item :
+                    categoryIncome) {
+                String s = "ID: " + item.getId() + " Name: " + item.getTitle();
+                dataList.add(s);
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dataList);
+            listView.setAdapter(adapter);
 
         }catch (Exception ex){
             Log.e(TAG, "MainStatitics - bindingData - " + ex.getMessage());
@@ -212,6 +245,7 @@ public class MainStatitics extends AppCompatActivity implements AdapterView.OnIt
 
     private void bindingView() {
         try{
+            listView = findViewById(R.id.listview);
             pieChart = findViewById(R.id.piechart);
             spMonth = findViewById(R.id.sp_statistic_month);
             barChart = findViewById(R.id.bar_chart);
@@ -226,7 +260,9 @@ public class MainStatitics extends AppCompatActivity implements AdapterView.OnIt
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+        String selectedItem = parent.getItemAtPosition(position).toString();
+        month = position+ 1;
+        getData();
     }
 
     @Override

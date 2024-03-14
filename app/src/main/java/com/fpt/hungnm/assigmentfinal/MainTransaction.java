@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -84,7 +85,7 @@ public class MainTransaction extends AppCompatActivity implements View.OnClickLi
             spCategory.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,titleCategories));
             edtStartDate.setOnClickListener(this);
             edtToDate.setOnClickListener(this);
-            btnSearch.setOnClickListener(this::onSearch);
+
             
         }catch (Exception ex){
             Log.e(TAG, "MainTransaction - bindingData - " + ex.getMessage());
@@ -149,6 +150,7 @@ public class MainTransaction extends AppCompatActivity implements View.OnClickLi
             btnHome.setOnClickListener(this::goToHome);
             btnBudget.setOnClickListener(this::goToBudget);
             btnAccount.setOnClickListener(this::goToAccount);
+            btnSearch.setOnClickListener(this::onSearch);
         }catch (Exception ex){
             Log.e(TAG, "MainTransaction - onCreate - " + ex.getMessage());
         }
@@ -168,7 +170,7 @@ public class MainTransaction extends AppCompatActivity implements View.OnClickLi
 
     private void goToAccount(View view) {
         try{
-            Intent i = new Intent(this,MainTransaction.class);
+            Intent i = new Intent(this,MainStatitics.class);
             startActivityForResult(i,REQUEST_CODE);
         }catch (Exception ex){
             Log.e(TAG, "MainTransaction - goToAccount - " + ex.getMessage());
@@ -177,7 +179,7 @@ public class MainTransaction extends AppCompatActivity implements View.OnClickLi
 
     private void goToBudget(View view) {
         try{
-            Intent i = new Intent(this, Budget.class);
+            Intent i = new Intent(this, MainBudget.class);
             startActivityForResult(i,REQUEST_CODE);
         }catch (Exception ex){
             Log.e(TAG, "MainTransaction - goToBudget - " + ex.getMessage());

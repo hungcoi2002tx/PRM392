@@ -104,6 +104,28 @@ public class MyDbContext extends SQLiteOpenHelper {
         return list;
     }
 
+
+    public boolean getCategoryById(int _id ){
+        try{
+
+            SQLiteDatabase sql = getReadableDatabase();
+            String orderBy = "CreateDate DESC";
+            Cursor cs = sql.rawQuery("Select * from categories where id = " + _id,null);
+            while (cs != null && cs.moveToNext()){
+                int id = cs.getInt(0);
+                String title = cs.getString(1);
+                String isIncome = cs.getString(2);
+                String createDateStr = cs.getString(3);
+                String[] parts = createDateStr.split(" ");
+                String date = parts[0];
+                return true;
+            }
+        }catch (Exception ex){
+            Log.e(TAG,"MyDbContext - getAllCategory - " + ex.getMessage());
+        }
+        return false;
+    }
+
     public List<Category> getAllCategory(){
         List<Category> list = new ArrayList<>();
         try{
@@ -542,7 +564,13 @@ public static String convertDateFormat(String dateString) {
 
             String orderBy = "CreateDate DESC";
             SQLiteDatabase st = getReadableDatabase();
-            String query = "SELECT * FROM transactions where "+ selection + " ORDER BY CreateDate DESC";
+            String query ="";
+            if(selection == null){
+                 query = "SELECT * FROM transactions ORDER BY CreateDate DESC";
+            }else{
+                 query = "SELECT * FROM transactions where "+ selection + " ORDER BY CreateDate DESC";
+            }
+
             //Cursor cs = st.query(TABLE_TRANSACTIONS,null,selection,selectionArgs,null,null,orderBy);
             Cursor cs = st.rawQuery(query,null);
             while (cs != null && cs.moveToNext()){

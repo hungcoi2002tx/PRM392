@@ -44,6 +44,8 @@ public class Expense_Add extends AppCompatActivity {
 
     private Transaction transaction;
 
+    private ArrayAdapter<String> adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
@@ -67,15 +69,17 @@ public class Expense_Add extends AppCompatActivity {
                 btnSave.setText("Update");
                 edtExpenseDes.setText(transaction.getTitle());
                 edtExpenseMoney.setText(transaction.getPrice());
-                int i = 0;
                 for (Category category :
                         categories) {
                     if (category.getId() == Integer.parseInt(transaction.getCategory())) {
+                        int i = adapter.getPosition(category.getTitle());
                         spinnerCategory.setSelection(i);
+                        Log.e(TAG, "Expense_Add - receiverIntent - " + category.getTitle() + spinnerCategory.getSelectedItem().toString());
                         break;
                     }
-                    i++;
                 }
+            }else{
+                transaction = new Transaction();
             }
         }catch (Exception ex){
             Log.e(TAG, "Expense_Add - receiverIntent - " + ex.getMessage());
@@ -96,7 +100,9 @@ public class Expense_Add extends AppCompatActivity {
             }else{
                 tvNoCategories.setText("");
             }
-            spinnerCategory.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,titleCategories));
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, titleCategories);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerCategory.setAdapter(adapter);
         }catch (Exception ex){
             Log.e(TAG, "Expense_Add - bindingData - " + ex.getMessage());
         }
@@ -115,6 +121,7 @@ public class Expense_Add extends AppCompatActivity {
     private void onGoToCategory(View view) {
         try{
             Intent i = new Intent(this, MainCategory.class);
+            i.putExtra("type","EXPENSE");
             startActivity(i);
 
         }catch (Exception ex){
@@ -209,6 +216,7 @@ public class Expense_Add extends AppCompatActivity {
             tvError = findViewById(R.id.tv_addexpense_error);
             imgAddCategory = findViewById(R.id.img_expense_add_category);
             imgBackToHome = findViewById(R.id.img_expense_back);
+            transaction = new Transaction();
         }catch (Exception ex){
             Log.e(TAG, "Expense_Add - bindingView - " + ex.getMessage());
         }
@@ -239,6 +247,8 @@ public class Expense_Add extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        bindingData();
+        if(transaction.getId() == 0){
+            bindingData();
+        }
     }
 }
